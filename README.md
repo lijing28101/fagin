@@ -36,6 +36,7 @@ The following is required
    Synteny format as below (without header):
  ```diff
  ! start coordinate should be always smaller than end even if the orientation is -
+ ! use tab as delimiter
  - query_chromosome query_start query_end focal_chromosome focal_start focal_end orientation
  ```
  ```
