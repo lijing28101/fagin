@@ -37,7 +37,7 @@ The following is required
  ```diff
  ! start coordinate should be always smaller than end even if the orientation is -
  ! use tab as delimiter
- - query_chromosome query_start query_end focal_chromosome focal_start focal_end orientation
+ - query_chromosome   query_start   query_end    focal_chromosome   focal_start  focal_end  orientation
  ```
  ```
  glyma.Wm82.gnm4.Gm01    21959   38456   glyso.PI483463.gnm1.Gs01        36820   53293   99.33   +
