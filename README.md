@@ -133,6 +133,15 @@ m <- run_fagin(con)
 In order to get homolog class, you can extract information from `m` using the code as below:
 
 ```R
+rbind_with_name <- function(xs, grpname){
+  for(name in names(xs)){
+    xs[[name]][[grpname]] <- name
+  }
+  out <- do.call(rbind, xs)
+  rownames(out) <- NULL
+  out
+}
+
 # convert the group labels corresponding to the fagin paper
 name_conversion <-  c(O1="A_gen", O2="A_trn", O3="A_orf",
                       N1="N_cds", N2="N_exo", N3="N_rna", N4="N_dna",
