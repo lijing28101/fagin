@@ -154,6 +154,8 @@ clean_name <- function(x, suffix){
 }
 
 # determine the homolog feature for each gene as figure 3 in fagin paper 
+# feature_table is a list of dataframes for the homolog class of query and control genes against the target species.
+# the following code combine the list into a single dataframe.
 feats <- get_value(m, tag='feature_table') %>%
   rbind_with_name("target_species") %>%
   clean_name("feature_table/query/") %>% 
@@ -167,25 +169,37 @@ strata <- readr::read_tsv("10.31_strata.tab")
 
 id_query <- get_value(m, tag='query_genes')[[1]]
 
+#subset strata for query genes and rename the column names
 query <- subset(strata, seqid %in% id_query) %>%
   dplyr::select(seqid, std_strata_name = mrca, std_strata_level = ps)
 
+#query_labels is a list for the genes group as Fig.5 in paper. Include 3 list, tree, labels, and summary
+#tree: relation as Fig.3 in fagin paper.
+#labels: a list of dataframes of groups for each species. 
+#summary: counts of genes by groups and species. This is the data for Fig.5 without grouping by gene age.
 vs_query <- get_value(m, tag='query_labels')[[1]]
 
+#combine the list of vs_query to a single dataframe, and convert the group name same as the name in paper (fig.5)
 labels_query <- rbind_with_name(vs_query$labels, "target_species") %>%
   dplyr::select(seqid, homology_class=secondary, target_species) %>%
   dplyr::mutate(homology_class = name_conversion[homology_class])
 
+#merge the query gene groups by fagin and the phylostratra levels
 query <- merge(query, labels_query, by='seqid')
-
 query <- merge(query, feats, by=c("seqid", "target_species"))
 
+#query_origins is a list of dataframes for the rules in fig.4. Include root, backbone, classStr, and classSum
+#root is your input tree for the species.
+#backbone is the gene classification for each query gene for each clade as fig.4
+#classStr is the final gene classification for each query gene as fig.4
+#classSum is the frequency for each classification.
 ori_query <- get_value(m, tag="query_origins")[[1]]$backbone
 ori_query <- as.matrix(ori_query)
 ori_query[ori_query == "O"] <- "A"
 ori_query <- as.data.frame(ori_query)
 ori_query$seqid <- rownames(ori_query)
 
+#combine two classification result
 query <- merge(query, ori_query, by='seqid')
 query$group = "query"
 
